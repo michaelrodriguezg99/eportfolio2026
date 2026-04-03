@@ -1623,7 +1623,7 @@
     <div class="hero-content">
         <div class="hero-eyebrow">Based in Puerto Rico</div>
 
-    <h1 class="hero-name hover-letters"> Hi, I'm <span class="accent">Michael</span><br>Rodriguez
+    <h1 class="hero-name hover-letters">Hi, I'm <span class="accent">Michael</span><br>Rodriguez
     </h1>
 
         <div class="hero-subtitle-row">
@@ -2504,7 +2504,7 @@ setTimeout(type, 2800);
 
 document.querySelectorAll('.hover-letters').forEach(el => {
   const walk = node => {
-    if (node.nodeType === 3) {
+    if (node.nodeType === 3) { // text node
       const frag = document.createDocumentFragment();
       node.textContent.split('').forEach(char => {
         const span = document.createElement('span');
@@ -2515,7 +2515,15 @@ document.querySelectorAll('.hover-letters').forEach(el => {
       node.replaceWith(frag);
     } 
     else if (node.nodeType === 1 && node.tagName !== 'BR') {
-      [...node.childNodes].forEach(walk);
+      if (node.classList.contains('accent')) {
+        // Wrap the whole accent span in a .char span instead of walking inside
+        const wrapper = document.createElement('span');
+        wrapper.className = 'char';
+        node.parentNode.insertBefore(wrapper, node);
+        wrapper.appendChild(node);
+      } else {
+        [...node.childNodes].forEach(walk);
+      }
     }
   };
   walk(el);
