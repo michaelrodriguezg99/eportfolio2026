@@ -1624,7 +1624,7 @@
         <div class="hero-eyebrow">Based in Puerto Rico</div>
 
     <h1 class="hero-name hover-letters">
-        Hi, I'm <span class="accent">Michael</span><br>Rodriguez
+        Hi, I'm <span class="accent"> Michael</span><br>Rodriguez
     </h1>
 
         <div class="hero-subtitle-row">
@@ -2416,9 +2416,11 @@ var cIdx     = 0;
 var deleting = false;
 
 function renderChars (str) {
-    /* Wrap every character (including spaces) in a hoverable span */
     typeEl.innerHTML = str.split('').map(function (c) {
-        var escaped = c === '&' ? '&amp;' : c === '<' ? '&lt;' : c;
+        var escaped = c === ' '  ? '&nbsp;'
+                    : c === '&' ? '&amp;'
+                    : c === '<' ? '&lt;'
+                    : c;
         return '<span class="char">' + escaped + '</span>';
     }).join('');
 }
