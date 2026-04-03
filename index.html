@@ -440,9 +440,27 @@
             font-weight: 800;
             pointer-events: none;
             user-select: none;
-            animation: codeFloat ease-in-out infinite;
             will-change: transform;
+            opacity: 0.09;                                                                                                                                                                                                                                   
+            transition: transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);     
         }
+
+        /* Transparent outline effect on hero text hover */                                                                                                                                                                                                  
+        .hero-name {                                                                                                                                                                                                                                         
+            cursor: default;                                                                                                                                                                                                                                 
+            transition: color 0.5s ease;                                                                                                                                                                                                                     
+        }                                                                                                                                                                                                                                                    
+        .hero-name .accent {                                                                                                                                                                                                                                 
+            transition: color 0.5s ease;                                                                                                                                                                                                                     
+        }                                                                                                                                                                                                                                                    
+        .hero-name:hover {                                                                                                                                                                                                                                   
+            color: transparent;                                                                                                                                                                                                                              
+            -webkit-text-stroke: 1.5px var(--text-primary);                                                                                                                                                                                                  
+        }                                                                                                                                                                                                                                                    
+        .hero-name:hover .accent {                                                                                                                                                                                                                           
+            color: transparent;                                                                                                                                                                                                                              
+            -webkit-text-stroke: 1.5px var(--accent);                                                                                                                                                                                                        
+       }     
 
         @keyframes codeFloat {
             0%, 100% { transform: translateY(0px); opacity: 0.5; }
@@ -492,6 +510,21 @@
             animation: heroFadeUp 0.8s ease 0.6s forwards;
         }
 
+        .hero-name { transition: color 0.5s ease; }
+        .hero-name:hover,
+        .hero-name:hover .accent { color: transparent; }
+
+        .hero-description { transition: color 0.5s ease; }
+        .hero-description:hover { color: transparent; }
+
+        .hero-subtitle-row { transition: color 0.5s ease; }
+        .hero-subtitle-row:hover,
+        .hero-subtitle-row:hover .typewriter-text {
+          color: transparent;
+          border-color: transparent;
+        }
+
+
         .hero-name .accent { color: var(--accent); }
 
         .hero-subtitle-row {
@@ -505,17 +538,19 @@
             gap: 10px;
             min-height: 44px;
             opacity: 0;
-            animation: heroFadeUp 0.8s ease 0.8s forwards;
+            cursor: default;                                                                                                                                                                                                                                 
+            transition: opacity 0.5s ease;                                                                                                                                                                                                                   
         }
+       .hero-subtitle-row:hover {                                                                                                                                                                                                                           
+            opacity: 0;                                                                                                                                                                                                                                      
+        }                                                                                                                                                                                                                                                    
+ 
+        /* Static accent label — no cursor, no blink */                  
 
         .typewriter-text {
             color: var(--accent);
-            border-right: 2.5px solid var(--accent);
-            padding-right: 3px;
-            animation: blink 0.7s step-end infinite;
         }
 
-        @keyframes blink { 50% { border-color: transparent; } }
 
         .hero-description {
             font-size: 17px;
@@ -525,7 +560,15 @@
             line-height: 1.85;
             opacity: 0;
             animation: heroFadeUp 0.8s ease 1.0s forwards;
-        }
+            cursor: default;                                                                                                                                                                                                                                 
+            transition: color 0.5s ease;                                                                                                                                                                                                                     
+          }
+        .hero-description:hover {                                                                                                                                                                                                                            
+            color: transparent;                                                                                                                                                                                                                              
+            -webkit-text-stroke: 0.5px var(--text-secondary);                                                                                                                                                                                                
+        }                                                                                                                                                                                                                                                    
+ 
+
 
         .hero-actions {
             display: flex;
@@ -1580,7 +1623,7 @@
 
         <div class="hero-subtitle-row">
             <span>I'm a</span>
-            <span class="typewriter-text" id="typewriter" aria-live="polite"></span>
+            <span class="typewriter-text">Software Engineer</span> 
         </div>
 
         <p class="hero-description">
@@ -2359,42 +2402,6 @@
     }
 
     /* ----------------------------------------------------------
-       TYPEWRITER EFFECT
-       ---------------------------------------------------------- */
-    var typeEl    = document.getElementById('typewriter');
-    var phrases   = ['Software Engineer', 'Frontend Developer', 'Problem Solver', 'Tech Enthusiast'];
-    var pIdx      = 0;
-    var cIdx      = 0;
-    var deleting  = false;
-
-    function type () {
-        var phrase = phrases[pIdx];
-        if (deleting) {
-            typeEl.textContent = phrase.substring(0, cIdx - 1);
-            cIdx--;
-        } else {
-            typeEl.textContent = phrase.substring(0, cIdx + 1);
-            cIdx++;
-        }
-
-        var delay = deleting ? 55 : 95;
-
-        if (!deleting && cIdx === phrase.length) {
-            delay    = 2200;
-            deleting = true;
-        } else if (deleting && cIdx === 0) {
-            deleting = false;
-            pIdx     = (pIdx + 1) % phrases.length;
-            delay    = 350;
-        }
-
-        setTimeout(type, delay);
-    }
-
-    /* Start after overlay finishes (≈2.7 s) */
-    setTimeout(type, 2800);
-
-    /* ----------------------------------------------------------
        3D TILT CARD EFFECT
        ---------------------------------------------------------- */
     function initTilt (card) {
@@ -2431,23 +2438,32 @@
     document.querySelectorAll('.tilt-card').forEach(initTilt);
 
     /* ----------------------------------------------------------
-       PARALLAX — HERO SHAPES ON MOUSE MOVE
-       ---------------------------------------------------------- */
-    var blobs     = document.querySelectorAll('.blob');
-    var codeElems = document.querySelectorAll('.code-elem');
+       PARALLAX — HERO SHAPES + CODE TOKENS FOLLOW MOUSE                                                                                                                                                                                                    
+         ---------------------------------------------------------- */
+      var blobs     = document.querySelectorAll('.blob');
+     var codeElems = document.querySelectorAll('.code-elem');
+  
+    /* Assign each code token a fixed depth so they layer at different speeds */                                                                                                                                                                            
+    var codeDepths = [6, 12, 9, 18, 7, 14, 10, 16, 8, 11];                                                                                                                                                                                                  
+    codeElems.forEach(function (el, i) {                                                                                                                                                                                                                    
+        el.dataset.depth = codeDepths[i % codeDepths.length];                                                                                                                                                                                               
+    });                                                                                                                                                                                                                                                     
+         
 
     document.addEventListener('mousemove', function (e) {
         var xRatio = (e.clientX / window.innerWidth  - 0.5) * 2;
         var yRatio = (e.clientY / window.innerHeight - 0.5) * 2;
 
         blobs.forEach(function (el, i) {
-            var depth = (i + 1) * 8;
+            var depth = (i + 1) * 10;
             el.style.transform = 'translate(' + (xRatio * depth) + 'px, ' + (yRatio * depth) + 'px)';
         });
 
-        codeElems.forEach(function (el, i) {
-            var depth = ((i % 4) + 1) * 5;
-            el.style.transform = 'translate(' + (xRatio * depth) + 'px, ' + (yRatio * depth) + 'px)';
+        /* Code tokens: no CSS transition — raw follow for snappy feel */                                                                                                                                                                                   
+        codeElems.forEach(function (el) {                                                                                                                                                                                                                   
+            var d = parseFloat(el.dataset.depth) || 8;                                                                                                                                                                                                      
+            el.style.transition = 'none';                                                                                                                                                                                                                   
+            el.style.transform  = 'translate(' + (xRatio * d) + 'px, ' + (yRatio * d) + 'px)'; 
         });
     }, { passive: true });
 
