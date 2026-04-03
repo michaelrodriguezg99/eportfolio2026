@@ -2499,7 +2499,27 @@ setTimeout(type, 2800);
     var codeDepths = [6, 12, 9, 18, 7, 14, 10, 16, 8, 11];                                                                                                                                                                                                  
     codeElems.forEach(function (el, i) {                                                                                                                                                                                                                    
         el.dataset.depth = codeDepths[i % codeDepths.length];                                                                                                                                                                                               
-    });                                                                                                                                                                                                                                                     
+    });
+
+    document.querySelectorAll('.hover-letters').forEach(el => {
+  const walk = node => {
+    if (node.nodeType === 3) { // text node
+      const frag = document.createDocumentFragment();
+      node.textContent.split('').forEach(char => {
+        const span = document.createElement('span');
+        span.className = 'char';
+        span.textContent = char;
+        frag.appendChild(span);
+      });
+      node.replaceWith(frag);
+    } 
+    else if (node.nodeType === 1 && node.tagName !== 'BR') {
+      [...node.childNodes].forEach(walk);
+    }
+  };
+
+  walk(el);
+});
          
 
     document.addEventListener('mousemove', function (e) {
@@ -2521,25 +2541,6 @@ setTimeout(type, 2800);
 
 })();
 
-document.querySelectorAll('.hover-letters').forEach(el => {
-  const walk = node => {
-    if (node.nodeType === 3) { // text node
-      const frag = document.createDocumentFragment();
-      node.textContent.split('').forEach(char => {
-        const span = document.createElement('span');
-        span.className = 'char';
-        span.textContent = char;
-        frag.appendChild(span);
-      });
-      node.replaceWith(frag);
-    } 
-    else if (node.nodeType === 1 && node.tagName !== 'BR') {
-      [...node.childNodes].forEach(walk);
-    }
-  };
-
-  walk(el);
-});
 </script>
 </body>
 </html>
