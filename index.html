@@ -2503,14 +2503,14 @@ setTimeout(type, 2800);
         el.dataset.depth = codeDepths[i % codeDepths.length];                                                                                                                                                                                               
     });
 
-    document.querySelectorAll('.hover-letters').forEach(el => {
+document.querySelectorAll('.hover-letters').forEach(el => {
   const walk = node => {
-    if (node.nodeType === 3) { // text node
+    if (node.nodeType === 3) {
       const frag = document.createDocumentFragment();
       node.textContent.split('').forEach(char => {
         const span = document.createElement('span');
         span.className = 'char';
-        span.textContent = char;
+        span.textContent = char === ' ' ? '\u00A0' : char;
         frag.appendChild(span);
       });
       node.replaceWith(frag);
@@ -2519,7 +2519,6 @@ setTimeout(type, 2800);
       [...node.childNodes].forEach(walk);
     }
   };
-
   walk(el);
 });
          
