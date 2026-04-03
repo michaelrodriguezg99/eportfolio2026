@@ -441,7 +441,7 @@
             pointer-events: none;
             user-select: none;
             will-change: transform;
-            opacity: 0.09;                                                                                                                                                                                                                                   
+            opacity: 0.75;                                                                                                                                                                                                                                   
             transition: transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);     
         }
 
@@ -510,6 +510,15 @@
             animation: heroFadeUp 0.8s ease 0.6s forwards;
         }
 
+        .char {
+        transition: color 0.3s ease, transform 0.2s ease;
+        }
+
+        .char:hover {
+          color: transparent;
+          transform: translateY(-2px);
+        }
+
         .hero-name { transition: color 0.5s ease; }
         .hero-name:hover,
         .hero-name:hover .accent { color: transparent; }
@@ -550,16 +559,7 @@
           }
   
         @keyframes blink { 50% { border-color: transparent; } }                                                                                                                                                                                              
-                                                                                                                                                                                                                                                             
-        /* Individual character hover — only the letter you touch goes transparent */                                                                                                                                                                        
-        .typewriter-text .char {                                                                                                                                                                                                                             
-            display: inline-block;                                                                                                                                                                                                                           
-            transition: color 0.18s ease, -webkit-text-stroke-color 0.18s ease;                                                                                                                                                                                          cursor: default;                                                                                                                                                                                                                                 
-        }                                                                                                                                                                                                                                                    
-        .typewriter-text .char:hover {                                                                                                                                                                                                                       
-            color: transparent;                                                                                                                                                                                                                              
-            -webkit-text-stroke: 1px var(--accent);                                                                                                                                                                                                          
-        }     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 
 
         .hero-description {
@@ -572,11 +572,7 @@
             animation: heroFadeUp 0.8s ease 1.0s forwards;
             cursor: default;                                                                                                                                                                                                                                 
             transition: color 0.5s ease;                                                                                                                                                                                                                     
-          }
-        .hero-description:hover {                                                                                                                                                                                                                            
-            color: transparent;                                                                                                                                                                                                                              
-            -webkit-text-stroke: 0.5px var(--text-secondary);                                                                                                                                                                                                
-        }                                                                                                                                                                                                                                                    
+          }                                                                                                                                                                                                                                              
  
 
 
@@ -1627,9 +1623,9 @@
     <div class="hero-content">
         <div class="hero-eyebrow">Based in Puerto Rico</div>
 
-        <h1 class="hero-name">
-            Hi, I'm <span class="accent">Michael</span><br>Rodriguez
-        </h1>
+    <h1 class="hero-name hover-letters">
+        Hi, I'm <span class="accent">Michael</span><br>Rodriguez
+    </h1>
 
         <div class="hero-subtitle-row">
             <span>I'm a</span>
@@ -2524,6 +2520,26 @@ setTimeout(type, 2800);
     }, { passive: true });
 
 })();
+
+document.querySelectorAll('.hover-letters').forEach(el => {
+  const walk = node => {
+    if (node.nodeType === 3) { // text node
+      const frag = document.createDocumentFragment();
+      node.textContent.split('').forEach(char => {
+        const span = document.createElement('span');
+        span.className = 'char';
+        span.textContent = char;
+        frag.appendChild(span);
+      });
+      node.replaceWith(frag);
+    } 
+    else if (node.nodeType === 1 && node.tagName !== 'BR') {
+      [...node.childNodes].forEach(walk);
+    }
+  };
+
+  walk(el);
+});
 </script>
 </body>
 </html>
