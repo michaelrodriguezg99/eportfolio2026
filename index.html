@@ -549,7 +549,22 @@
 
         .typewriter-text {
             color: var(--accent);
-        }
+            border-right: 2.5px solid var(--accent);                                                                                                                                                                                                         
+            padding-right: 3px;                                                                                                                                                                                                                              
+            animation: blink 0.7s step-end infinite;                                                                                                                                                                                                         
+          }
+  
+        @keyframes blink { 50% { border-color: transparent; } }                                                                                                                                                                                              
+                                                                                                                                                                                                                                                             
+        /* Individual character hover — only the letter you touch goes transparent */                                                                                                                                                                        
+        .typewriter-text .char {                                                                                                                                                                                                                             
+            display: inline-block;                                                                                                                                                                                                                           
+            transition: color 0.18s ease, -webkit-text-stroke-color 0.18s ease;                                                                                                                                                                                          cursor: default;                                                                                                                                                                                                                                 
+        }                                                                                                                                                                                                                                                    
+        .typewriter-text .char:hover {                                                                                                                                                                                                                       
+            color: transparent;                                                                                                                                                                                                                              
+            -webkit-text-stroke: 1px var(--accent);                                                                                                                                                                                                          
+        }     
 
 
         .hero-description {
@@ -1623,7 +1638,7 @@
 
         <div class="hero-subtitle-row">
             <span>I'm a</span>
-            <span class="typewriter-text">Software Engineer</span> 
+            <span class="typewriter-text" id="typewriter" aria-live="polite"></span>  
         </div>
 
         <p class="hero-description">
@@ -2400,7 +2415,53 @@
         }, { threshold: 0.4 });
         counterObserver.observe(statsGrid);
     }
+/* ----------------------------------------------------------
+   TYPEWRITER EFFECT — per-character spans for hover effect
+   ---------------------------------------------------------- */
+var typeEl   = document.getElementById('typewriter');
+var phrases  = ['Software Engineer', 'Frontend Developer', 'Problem Solver', 'Tech Enthusiast'];
+var pIdx     = 0;
+var cIdx     = 0;
+var deleting = false;
 
+function renderChars (str) {
+    /* Wrap every character (including spaces) in a hoverable span */
+    typeEl.innerHTML = str.split('').map(function (c) {
+        var escaped = c === '&' ? '&amp;' : c === '<' ? '&lt;' : c;
+        return '<span class="char">' + escaped + '</span>';
+    }).join('');
+}
+
+function type () {
+    var phrase = phrases[pIdx];
+    var visible;
+
+    if (deleting) {
+        cIdx--;
+        visible = phrase.substring(0, cIdx);
+    } else {
+        cIdx++;
+        visible = phrase.substring(0, cIdx);
+    }
+
+    renderChars(visible);
+
+    var delay = deleting ? 55 : 95;
+
+    if (!deleting && cIdx === phrase.length) {
+        delay    = 2200;
+        deleting = true;
+    } else if (deleting && cIdx === 0) {
+        deleting = false;
+        pIdx     = (pIdx + 1) % phrases.length;
+        delay    = 350;
+    }
+
+    setTimeout(type, delay);
+}
+
+/* Start after overlay finishes (≈2.7 s) */
+setTimeout(type, 2800);
     /* ----------------------------------------------------------
        3D TILT CARD EFFECT
        ---------------------------------------------------------- */
